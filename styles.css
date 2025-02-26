@@ -1,11 +1,12 @@
 body {
   font-family: Arial, sans-serif;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-color: #f0f0f0;
+  background-color: #2e8b57;
 }
 
 #gameboard {
@@ -16,6 +17,7 @@ body {
   background-color: #333;
   padding: 5px;
   border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 .cell {
@@ -37,9 +39,20 @@ body {
 }
 
 .cell.X {
-  color: #ff6347; /* Color para X */
+  color: #ff6347;
 }
 
 .cell.O {
-  color: #4682b4; /* Color para O */
+  color: #4682b4;
+}
+
+#message {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #333;
+  background-color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }

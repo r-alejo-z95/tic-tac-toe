@@ -33,20 +33,20 @@ const Game = (function () {
   const playRound = (index) => {
     if (Gameboard.makeMove(index, currentPlayer.marker)) {
       if (checkWin()) {
-        console.log(`${currentPlayer.name} wins!`);
+        DisplayController.updateMessage(`${currentPlayer.name} wins!`);
         return;
       }
       if (checkTie()) {
-        console.log("It's a tie!");
+        DisplayController.updateMessage("It's a tie!");
         return;
       }
       switchPlayer();
+      DisplayController.updateMessage(`${currentPlayer.name}'s turn`);
     }
   };
 
   const checkWin = () => {
     const board = Gameboard.getBoard();
-    console.log(board);
     const winPatterns = [
       [0, 1, 2],
       [3, 4, 5],
@@ -69,6 +69,40 @@ const Game = (function () {
   };
 
   return { playRound };
+})();
+
+// Display Controller module
+const DisplayController = (function () {
+  const cells = document.querySelectorAll(".cell");
+  const messageElement = document.createElement("div");
+  messageElement.id = "message";
+  messageElement.textContent = "Click on a cell to start";
+  document.body.appendChild(messageElement);
+
+  cells.forEach((cell) => {
+    cell.addEventListener("click", (e) => {
+      const index = e.target.dataset.index;
+      Game.playRound(index);
+      updateBoard();
+    });
+  });
+
+  const updateBoard = () => {
+    const board = Gameboard.getBoard();
+    cells.forEach((cell, index) => {
+      cell.textContent = board[index];
+      cell.classList.remove("X", "O");
+      if (board[index]) {
+        cell.classList.add(board[index]);
+      }
+    });
+  };
+
+  const updateMessage = (message) => {
+    messageElement.textContent = message;
+  };
+
+  return { updateBoard, updateMessage };
 })();
 
 // Example usage in the console
