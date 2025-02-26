@@ -32,8 +32,10 @@ const Game = (function () {
 
   const playRound = (index) => {
     if (Gameboard.makeMove(index, currentPlayer.marker)) {
-      if (checkWin()) {
+      const winningPattern = checkWin();
+      if (winningPattern) {
         DisplayController.updateMessage(`${currentPlayer.name} wins!`);
+        DisplayController.highlightWinningCells(winningPattern);
         DisplayController.disableBoard();
         return;
       }
@@ -60,10 +62,13 @@ const Game = (function () {
       [2, 4, 6],
     ];
 
-    return winPatterns.some((pattern) => {
+    for (const pattern of winPatterns) {
       const [a, b, c] = pattern;
-      return board[a] && board[a] === board[b] && board[a] === board[c];
-    });
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return pattern;
+      }
+    }
+    return null;
   };
 
   const checkTie = () => {
@@ -106,9 +111,15 @@ const DisplayController = (function () {
     });
   };
 
+  const highlightWinningCells = (pattern) => {
+    pattern.forEach((index) => {
+      cells[index].style.backgroundColor = "#2e8b57";
+    });
+  };
+
   const updateMessage = (message) => {
     messageElement.textContent = message;
   };
 
-  return { updateBoard, updateMessage, disableBoard };
+  return { updateBoard, updateMessage, disableBoard, highlightWinningCells };
 })();
