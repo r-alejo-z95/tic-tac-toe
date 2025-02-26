@@ -12,7 +12,13 @@ const Gameboard = (function () {
     return false;
   };
 
-  return { getBoard, makeMove };
+  const reset = () => {
+    for (let i = 0; i < board.length; i++) {
+      board[i] = "";
+    }
+  };
+
+  return { getBoard, makeMove, reset };
 })();
 
 // Player factory
@@ -37,11 +43,13 @@ const Game = (function () {
         DisplayController.updateMessage(`${currentPlayer.name} wins!`);
         DisplayController.highlightWinningCells(winningPattern);
         DisplayController.disableBoard();
+        DisplayController.showRestartButton();
         return;
       }
       if (checkTie()) {
         DisplayController.updateMessage("It's a tie!");
         DisplayController.disableBoard();
+        DisplayController.showRestartButton();
         return;
       }
       switchPlayer();
@@ -81,10 +89,19 @@ const Game = (function () {
 // Display Controller module
 const DisplayController = (function () {
   const cells = document.querySelectorAll(".cell");
+
+  const messageContainer = document.createElement("div");
+  messageContainer.id = "message-cont";
+  document.body.appendChild(messageContainer);
+
   const messageElement = document.createElement("div");
   messageElement.id = "message";
   messageElement.textContent = "Click on a cell to start";
-  document.body.appendChild(messageElement);
+  messageContainer.appendChild(messageElement);
+
+  const restartBtn = document.createElement("button");
+  restartBtn.id = "restart-btn";
+  restartBtn.textContent = "⟳";
 
   cells.forEach((cell) => {
     cell.addEventListener("click", (e) => {
@@ -121,5 +138,32 @@ const DisplayController = (function () {
     messageElement.textContent = message;
   };
 
-  return { updateBoard, updateMessage, disableBoard, highlightWinningCells };
+  const showRestartButton = () => {
+    messageContainer.appendChild(restartBtn);
+    restartBtn.addEventListener("click", () => {
+      Gameboard.reset();
+      updateBoard();
+      updateMessage("Click on a cell to start");
+      cells.forEach((cell) => {
+        cell.style.pointerEvents = "auto";
+        cell.style.backgroundColor = "#fff";
+      });
+      hideRestartButton();
+    });
+  };
+
+  const hideRestartButton = () => {
+    if (messageContainer.contains(restartBtn)) {
+      messageContainer.removeChild(restartBtn);
+    }
+  };
+
+  return {
+    updateBoard,
+    updateMessage,
+    disableBoard,
+    highlightWinningCells,
+    showRestartButton,
+    hideRestartButton,
+  };
 })();
