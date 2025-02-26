@@ -34,10 +34,12 @@ const Game = (function () {
     if (Gameboard.makeMove(index, currentPlayer.marker)) {
       if (checkWin()) {
         DisplayController.updateMessage(`${currentPlayer.name} wins!`);
+        DisplayController.disableBoard();
         return;
       }
       if (checkTie()) {
         DisplayController.updateMessage("It's a tie!");
+        DisplayController.disableBoard();
         return;
       }
       switchPlayer();
@@ -98,14 +100,15 @@ const DisplayController = (function () {
     });
   };
 
+  const disableBoard = () => {
+    cells.forEach((cell) => {
+      cell.style.pointerEvents = "none";
+    });
+  };
+
   const updateMessage = (message) => {
     messageElement.textContent = message;
   };
 
-  return { updateBoard, updateMessage };
+  return { updateBoard, updateMessage, disableBoard };
 })();
-
-// Example usage in the console
-// Game.playRound(0); Player 1 makes a move at index 0
-// Game.playRound(1); Player 2 makes a move at index 1
-// Continue playing rounds...
